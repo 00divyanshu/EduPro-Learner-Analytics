@@ -1,0 +1,17 @@
+project:
+  name: "Learner Demographics and Course Enrollment Behavior Analysis on EduPro"
+  version: "1.0.0"
+
+data_paths:
+  users: "data/raw/users.csv"
+  courses: "data/raw/courses.csv"
+  transactions: "data/raw/transactions.csv"
+
+processed_dir: "data/processed"
+outputs_dir: "data/outputs"
+
+dashboard:
+  page_title: "EduPro Learner Analytics"
+  layout: "wide"
+  default_date_format: "%Y-%m-%d"
+
