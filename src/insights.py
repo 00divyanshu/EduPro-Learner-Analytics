@@ -37,6 +37,13 @@ def generate_business_insights(master_df: pd.DataFrame) -> list[str]:
         peak_month = monthly.idxmax()
         insights.append(f"Enrollment activity peaks in {peak_month}, which can guide campaign timing.")
 
+    if "Amount" in master_df:
+        revenue_by_category = master_df.groupby("CourseCategory")["Amount"].sum().sort_values(ascending=False)
+        if not revenue_by_category.empty and revenue_by_category.iloc[0] > 0:
+            insights.append(
+                f"{revenue_by_category.index[0]} contributes the highest revenue in the selected view."
+            )
+
     return insights
 
 
@@ -58,5 +65,11 @@ def generate_recommendations(master_df: pd.DataFrame) -> list[str]:
                 "Investigate inclusivity opportunities because one gender group dominates the current enrollment mix."
             )
 
-    return recommendations
+    if "IsPaidEnrollment" in master_df:
+        paid_rate = master_df["IsPaidEnrollment"].mean()
+        if paid_rate < 0.4:
+            recommendations.append(
+                "Use free courses as acquisition paths and add clear progression routes toward paid intermediate or advanced courses."
+            )
 
+    return recommendations

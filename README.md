@@ -1,16 +1,28 @@
-# EduPro Learner Demographics and Enrollment Analytics
+# EduPro Learner Analytics
 
-An end-to-end descriptive analytics project for understanding learner demographics and course enrollment behavior on EduPro, an online learning platform.
+Learner demographics and course enrollment behavior analysis for EduPro, an online learning platform. This is a descriptive analytics and learner intelligence project built with a professional Python pipeline and an interactive Streamlit dashboard.
 
-## Project Goal
+## Project Objective
 
-The goal is to help EduPro answer business questions such as:
+The project helps EduPro understand:
 
-- Which age groups are most active?
-- How do enrollment patterns differ by gender?
-- Which course categories are most popular?
-- Which course levels are preferred by different learner segments?
-- What insights can improve course planning, learner engagement, and inclusivity?
+- which age groups are most active
+- how enrollment behavior differs by gender
+- which course categories, levels, and types attract demand
+- how beginner, intermediate, and advanced learners behave
+- how paid and free enrollments contribute to course strategy
+- what business actions can improve planning, engagement, and inclusivity
+
+## Live App Workflow
+
+The Streamlit app runs from the repository data and automatically executes the analytics pipeline:
+
+1. Load users, courses, and transactions from `data/raw/`
+2. Clean and validate source data
+3. Merge the three datasets into one master analytics table
+4. Engineer learner, course, time, revenue, rating, and duration features
+5. Calculate KPIs and generate business insights
+6. Render an interactive dashboard with filters and Plotly charts
 
 ## Tech Stack
 
@@ -18,27 +30,28 @@ The goal is to help EduPro answer business questions such as:
 - Pandas and NumPy
 - Plotly
 - Streamlit
+- Matplotlib and Seaborn
 - OpenPyXL
 - PyYAML
 - Pytest
 
-## Folder Structure
+## Project Structure
 
 ```text
 app/                  Streamlit dashboard
-config/               Project configuration
-data/raw/             Input datasets from Google Drive export
-data/processed/       Pipeline-generated clean datasets
-data/outputs/         Optional charts/reports/exports
-docs/                 Reports, summaries, interview notes
+config/               Configurable project paths and settings
+data/raw/             Deployment-ready EduPro source CSV files
+data/processed/       Generated pipeline outputs, ignored by Git
+data/outputs/         Optional generated exports, ignored by Git
 notebooks/            EDA notebook
-src/                  Reusable project modules
-tests/                Pipeline tests
+paper/                Research paper for the project
+src/                  Reusable analytics modules
+tests/                Unit tests for the data pipeline
 ```
 
 ## Dataset Files
 
-Place the exported Google Drive files in `data/raw/` with these names:
+The app expects these files:
 
 ```text
 data/raw/users.csv
@@ -46,26 +59,20 @@ data/raw/courses.csv
 data/raw/transactions.csv
 ```
 
-Expected columns:
-
-- Users: `UserID`, `UserName`, `Age`, `Gender`
-- Courses: `CourseID`, `CourseName`, `CourseCategory`, `CourseType`, `CourseLevel`
-- Transactions: `TransactionID`, `UserID`, `CourseID`, `TransactionDate`
-
-Excel files are supported by the loader, but the default config points to CSV files. Update `config/config.yaml` if your files are `.xlsx`.
+The loader also recognizes the original EduPro export filenames if they are placed inside `data/raw/`.
 
 ## Setup
 
 ```bash
 python -m venv .venv
 .venv\Scripts\activate
-pip install -r requirements.txt
+python -m pip install -r requirements.txt
 ```
 
 ## Run Tests
 
 ```bash
-pytest
+python -m pytest -q
 ```
 
 ## Run Dashboard
@@ -74,26 +81,46 @@ pytest
 streamlit run app/streamlit_app.py
 ```
 
-## Project Workflow
+## Streamlit Cloud Deployment
 
-1. Load datasets from `data/raw/`
-2. Validate required columns
-3. Clean users, courses, and transactions
-4. Merge all datasets into a master analytics table
-5. Create demographic and enrollment features
-6. Calculate KPIs
-7. Generate charts and business insights
-8. Present results in Streamlit and project reports
+Use these settings when deploying from GitHub:
 
-## Portfolio Value
+- Repository: `00divyanshu/EduPro-Learner-Analytics`
+- Branch: `main`
+- Main file path: `app/streamlit_app.py`
+- Python dependencies: `requirements.txt`
+
+Because the cleaned source CSV files are included in `data/raw/`, the app can run immediately after deployment.
+
+## Dashboard Sections
+
+- Executive View: KPIs, enrollment trends, top courses, insights
+- Demographics: age group and gender enrollment behavior
+- Behavior: course level, duration, rating, and category-level demand
+- Revenue: paid/free behavior and revenue by category
+- Data Preview: filtered master table for validation and explanation
+
+## Portfolio Highlights
 
 This project demonstrates:
 
-- data cleaning and preprocessing
-- multi-table data integration
-- feature engineering
-- descriptive analytics
-- dashboard development
+- multi-table analytics pipeline design
+- data cleaning and validation
+- feature engineering for learner intelligence
+- reusable modular Python code
+- interactive dashboard development
+- deployable Streamlit architecture
 - business insight generation
-- professional Python project structuring
+- professional GitHub-ready documentation
 
+## Research Paper
+
+The project paper is available at:
+
+```text
+paper/research_paper.md
+```
+
+## Resume Summary
+
+Built an end-to-end Streamlit learner analytics dashboard for EduPro using Python, Pandas, Plotly, and modular analytics pipelines to analyze 10,000 course enrollment transactions across learner demographics, course categories, course levels, and paid/free enrollment behavior.

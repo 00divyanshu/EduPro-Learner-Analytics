@@ -13,7 +13,7 @@ env/
 
 # Local logs and generated outputs
 logs/*.log
-data/raw/*
+app/logs/*.log
 data/processed/*
 data/outputs/*
 
@@ -22,8 +22,14 @@ data/outputs/*
 !data/processed/.gitkeep
 !data/outputs/.gitkeep
 
+# Keep deployment data available for Streamlit Cloud
+data/raw/*
+!data/raw/.gitkeep
+!data/raw/users.csv
+!data/raw/courses.csv
+!data/raw/transactions.csv
+
 # OS/editor
 .DS_Store
 Thumbs.db
 .vscode/
-

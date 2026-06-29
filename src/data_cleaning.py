@@ -78,6 +78,10 @@ def clean_courses(df: pd.DataFrame) -> pd.DataFrame:
         courses[column] = _clean_text(courses[column]).fillna("Unknown")
         courses[column] = courses[column].str.title()
 
+    for column in ["CoursePrice", "CourseDuration", "CourseRating"]:
+        if column in courses.columns:
+            courses[column] = pd.to_numeric(courses[column], errors="coerce")
+
     return courses.dropna(subset=["CourseID"]).reset_index(drop=True)
 
 
@@ -92,8 +96,15 @@ def clean_transactions(df: pd.DataFrame) -> pd.DataFrame:
     transactions["CourseID"] = _clean_text(transactions["CourseID"])
     transactions["TransactionDate"] = pd.to_datetime(
         transactions["TransactionDate"],
+        dayfirst=True,
         errors="coerce",
     )
+    if "Amount" in transactions.columns:
+        transactions["Amount"] = pd.to_numeric(transactions["Amount"], errors="coerce").fillna(0)
+    if "PaymentMethod" in transactions.columns:
+        transactions["PaymentMethod"] = _clean_text(transactions["PaymentMethod"]).fillna("Unknown")
+    if "TeacherID" in transactions.columns:
+        transactions["TeacherID"] = _clean_text(transactions["TeacherID"]).fillna("Unknown")
 
     return transactions.dropna(
         subset=["TransactionID", "UserID", "CourseID", "TransactionDate"]

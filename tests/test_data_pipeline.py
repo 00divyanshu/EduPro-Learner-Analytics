@@ -31,7 +31,8 @@ def sample_data():
             "TransactionID": ["T1", "T2", "T3"],
             "UserID": ["U1", "U2", "U3"],
             "CourseID": ["C1", "C1", "C2"],
-            "TransactionDate": ["2026-01-01", "2026-01-05", "2026-02-10"],
+            "TransactionDate": ["01/01/2026", "05/01/2026", "10/02/2026"],
+            "Amount": [0, 120.0, 250.0],
         }
     )
     return users, courses, transactions
@@ -48,6 +49,7 @@ def test_cleaning_and_merging_pipeline():
     assert master.shape[0] == 3
     assert {"AgeGroup", "EnrollmentMonth", "LearnerSegment"}.issubset(master.columns)
     assert master["TransactionDate"].dtype.kind == "M"
+    assert str(master["TransactionDate"].min().date()) == "2026-01-01"
 
 
 def test_age_group_assignment():
@@ -73,7 +75,11 @@ def test_kpi_metrics_have_expected_keys():
         "beginner_enrollments",
         "advanced_enrollments",
         "beginner_to_advanced_ratio",
+        "total_revenue",
+        "paid_enrollment_rate",
+        "avg_enrollments_per_learner",
+        "avg_course_rating",
     }
     assert expected.issubset(kpis.keys())
     assert kpis["total_enrollments"] == 3
-
+    assert kpis["total_revenue"] == 370.0

@@ -12,6 +12,22 @@ from src.logger import get_logger
 
 
 LOGGER = get_logger(__name__)
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+
+FALLBACK_DATASET_NAMES = {
+    "users": [
+        "users.csv",
+        "EduPro Online Platform - Users.csv",
+    ],
+    "courses": [
+        "courses.csv",
+        "EduPro Online Platform - Courses.csv",
+    ],
+    "transactions": [
+        "transactions.csv",
+        "EduPro Online Platform - Transactions.csv",
+    ],
+}
 
 
 def load_config(config_path: str | Path = "config/config.yaml") -> dict[str, Any]:
@@ -82,10 +98,31 @@ def load_dataset(path: str | Path, sheet_name: str | int | None = None) -> pd.Da
     raise DataLoadingError(f"Unsupported file type: {suffix}. Use CSV or Excel files.")
 
 
+def resolve_dataset_path(dataset_key: str, configured_path: str | Path) -> Path:
+    """Resolve configured dataset paths and known EduPro raw-file names."""
+    configured = Path(configured_path)
+    candidates = [configured]
+
+    if not configured.is_absolute():
+        candidates.append(PROJECT_ROOT / configured)
+
+    for filename in FALLBACK_DATASET_NAMES.get(dataset_key, []):
+        candidates.append(PROJECT_ROOT / "data" / "raw" / filename)
+
+    for candidate in candidates:
+        if candidate.exists():
+            return candidate
+
+    searched = "\n".join(f"- {candidate}" for candidate in candidates)
+    raise DataLoadingError(
+        f"Could not find the {dataset_key} dataset. Searched:\n{searched}"
+    )
+
+
 def load_project_datasets(config: dict[str, Any]) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     """Load users, courses, and transactions using paths from configuration."""
     paths = config["data_paths"]
-    users = load_dataset(paths["users"])
-    courses = load_dataset(paths["courses"])
-    transactions = load_dataset(paths["transactions"])
+    users = load_dataset(resolve_dataset_path("users", paths["users"]))
+    courses = load_dataset(resolve_dataset_path("courses", paths["courses"]))
+    transactions = load_dataset(resolve_dataset_path("transactions", paths["transactions"]))
     return users, courses, transactions
